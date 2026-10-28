@@ -11,7 +11,7 @@ public class Main{
 
     private static ArrayList<Class> classesCargadas = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
+    public static void main() throws Exception {
 
         //crear agenda
         Agenda agenda1 = new Agenda();
