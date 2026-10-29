@@ -1,6 +1,8 @@
 package agendaviews;
 
 import agenda.Agenda;
+import agenda.ContactoFamiliar;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -84,8 +86,78 @@ public class MostrarAgendaForm extends JFrame {
         
         panelPrincipal.add(scrollPane, BorderLayout.CENTER);
         
+        JButton btnAgregar = new JButton("Agregar Contacto");
+        btnAgregar.addActionListener(e -> agregarContactoFamiliarDialogo());  
+
         JPanel panelSur = new JPanel();
+        panelSur.add(btnAgregar);
         panelSur.add(btnVolver);
         panelPrincipal.add(panelSur, BorderLayout.SOUTH);
+    }
+
+    // Método para agregar un Contacto Familiar con validación de errores (Puntos 2 y 3)
+    private void agregarContactoFamiliarDialogo() {
+        try {
+            // 1. Nombre
+            String nombre = JOptionPane.showInputDialog(this, "Digite el nombre completo del familiar:");
+            if (nombre == null) return; // Si le da a cancelar
+            if (nombre.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 2. Edad (Validación de número con try-catch)
+            String edadStr = JOptionPane.showInputDialog(this, "Digite la edad (número entero):");
+            if (edadStr == null) return;
+            int edad = Integer.parseInt(edadStr.trim()); // Si meten letras, salta al NumberFormatException
+            if (edad <= 0) {
+                JOptionPane.showMessageDialog(this, "La edad debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 3. Género
+            String generoStr = JOptionPane.showInputDialog(this, "Digite el género (ej. 1 para M, 2 para F):");
+            if (generoStr == null) return;
+            int genero = Integer.parseInt(generoStr.trim());
+
+            // 4. Teléfono
+            String telefono = JOptionPane.showInputDialog(this, "Digite el teléfono:");
+            if (telefono == null || telefono.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El teléfono no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 5. Cédula (Validación de número y cédula duplicada)
+            String cedulaStr = JOptionPane.showInputDialog(this, "Digite la cédula (número entero único):");
+            if (cedulaStr == null) return;
+            int cedula = Integer.parseInt(cedulaStr.trim());
+
+            // 🔍 Validar si ya existe en la agenda de tu profe
+            if (agenda.buscarContacto(cedula) != null) {
+                JOptionPane.showMessageDialog(this, "¡Error! Ya existe un contacto registrado con la cédula " + cedula, "Cédula Duplicada", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 6. Parentesco
+            String parentesco = JOptionPane.showInputDialog(this, "Digite el parentesco (ej. Padre, Hermana, Prima):");
+            if (parentesco == null || parentesco.trim().isEmpty()) {
+                parentesco = "Familiar";
+            }
+
+            // Si todas las validaciones pasaron, creamos el objeto y lo metemos a la agenda
+            ContactoFamiliar nuevoFamiliar = new ContactoFamiliar(nombre, edad, genero, telefono, cedula, parentesco);
+            agenda.agregarContacto(nuevoFamiliar);
+
+            // Actualizamos el área de texto para que se vea reflejado de inmediato
+            txtAreaAgenda.setText(agenda.toString());
+            
+            JOptionPane.showMessageDialog(this, "¡Contacto familiar agregado con éxito!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (NumberFormatException ex) {
+            // 🛑 Error atrapado si el usuario metió letras en campos numéricos (Edad, Género o Cédula)
+            JOptionPane.showMessageDialog(this, "Error de formato: Debe ingresar obligatoriamente un número entero válido en los campos de edad, género y cédula.", "Error de Entrada", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
