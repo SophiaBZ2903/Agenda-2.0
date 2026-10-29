@@ -7,18 +7,19 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-public class Main{
+public class Main {
 
     private static ArrayList<Class> classesCargadas = new ArrayList<>();
 
-    public static void main() throws Exception {
+    // CORREGIDO: Se agregó `String[] args` obligatorios para Java
+    public static void main(String[] args) throws Exception {
 
-        //crear agenda
+        // Crear agenda
         Agenda agenda1 = new Agenda();
 
-        //crear contactos y agregarlos a la agenda
+        // Crear contactos y agregarlos a la agenda
         agenda1.agregarContacto(new ContactoFamiliar(
-                "Juan Pérez",
+                "Juan Peraza",
                 35,
                 1,
                 "8888-1111",
@@ -61,30 +62,31 @@ public class Main{
                 505050505,
                 "luis@negocios.com"
         ));
+
         agenda1.agregarEvento(new EventoReunion(
-                LocalDate.of(2026,11,15),
-                "El evento del año",100));
+                LocalDate.of(2026, 11, 15),
+                "El evento del año", 100));
 
         agenda1.agregarEvento(new EventoSocial(
                 LocalDate.now(),
                 "Cumpleaños de Alguien",
                 "París"));
-        //imprimir agenda
+
+        // Imprimir agenda inicial por consola
         System.out.println(agenda1);
 
-        //modificar un contacto de agenda
-        agenda1.modificarContactoFamiliar(101010101,"Ana María Vargas",29,2,"888-4444","Prima");
-        agenda1.modificarContactoFamiliar(404040404,"Ana María Vargas",29,2,"888-4444","Prima");
+        // Modificar un contacto de agenda
+        agenda1.modificarContactoFamiliar(101010101, "Ana María Vargas", 29, 2, "888-4444", "Prima");
+        agenda1.modificarContactoFamiliar(404040404, "Ana María Vargas", 29, 2, "888-4444", "Prima");
 
-        //eliminar contacto
+        // Eliminar contacto
         agenda1.eliminarContacto(101010101);
         agenda1.eliminarContacto(606060606);
 
+        // Carga dinámica de clases (si la vas a usar, descomenta la línea de abajo)
+        // cargarClases();
 
-        //voy a agregar nuevos objetos de forma dinámica
-        //cargarClases();
-        //voy a instanciar las nuevas clases
-        for (Class c:classesCargadas) {
+        for (Class c : classesCargadas) {
             if (ElementoAgenda.class.isAssignableFrom(c)
                     && !c.isInterface()
                     && !java.lang.reflect.Modifier.isAbstract(
@@ -95,12 +97,12 @@ public class Main{
                 agenda1.agregarEvento((Evento) elemento);
             }
         }
-        //agregar Eventos
-        //imprimir agenda final
+
+        // Imprimir agenda final por consola
         System.out.println(agenda1);
 
-        MainForm startForm = new MainForm(agenda1);
-
+        // Inicializar la Interfaz Gráfica pasando la agenda
+        MainForm S = new MainForm(agenda1);
     }
 
     public static void cargarClases() throws Exception {
@@ -131,9 +133,7 @@ public class Main{
 
                 Class<?> clase = loader.loadClass(nombreClase);
                 classesCargadas.add(clase);
-
             }
         }
     }
-
 }

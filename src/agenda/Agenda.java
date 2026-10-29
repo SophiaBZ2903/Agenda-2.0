@@ -104,14 +104,4 @@ public class Agenda {
                 .collect(Collectors.joining("\n"));
     }
 
-    /*@Override
-    public String toString() {
-        String resultado = "";
-
-        for (int i = 0; i < this.listaContactos.size(); i++) {
-            resultado += this.listaContactos.get(i).toString() + "\n";
-        }
-
-        return resultado;
-    }*/
 }
